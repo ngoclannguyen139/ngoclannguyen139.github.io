@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò Chơi Cờ Caro (Tic-Tac-Toe)</title>
+    <style>
+        /* PHẦN CSS */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #004d40;
+        }
+
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+
+        #status {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            background-color: #26a69a;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell {
+            background-color: #b2dfdb;
+            border: 2px solid #004d40;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            user-select: none; /* Ngăn chặn bôi đen chữ X/O */
+        }
+
+        .cell:hover {
+            background-color: #80cbc4;
+        }
+
+        .cell.X {
+            color: #ff5252; /* Màu đỏ cho X */
+        }
+
+        .cell.O {
+            color: #448aff; /* Màu xanh dương cho O */
+        }
+
+        .winning-cell {
+            background-color: #ffeb3b !important; /* Màu vàng khi thắng */
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            color: white;
+            background-color: #00796b;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #004d40;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>🎮 Cờ Caro 3x3</h1>
+    <div id="status">Lượt của người chơi: X</div>
+    
+    <div class="board" id="gameBoard">
+        </div>
+    
+    <button onclick="resetGame()">Chơi Lại</button>
+
+    <script>
+        /* PHẦN JAVASCRIPT */
+        const board = document.getElementById('gameBoard');
+        const statusDisplay = document.getElementById('status');
+        
+        // 1. Khởi tạo trạng thái trò chơi
+        let gameActive = true;
+        let currentPlayer = 'X';
+        // Mảng đại diện cho trạng thái 9 ô: ['','','','','','','','','']
+        let gameState = Array(9).fill(''); 
+
+        // Các trường hợp thắng (8 trường hợp)
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Hàng ngang
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Hàng dọc
+            [0, 4, 8], [2, 4, 6]             // Đường chéo
+        ];
+
+        // 2. Hàm tạo bảng cờ
+        function createBoard() {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.setAttribute('data-index', i);
+                cell.addEventListener('click', handleCellClick);
+                board.appendChild(cell);
+            }
+        }
+
+        // 3. Xử lý khi click vào ô cờ
+        function handleCellClick(event) {
+            const clickedCell = event.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+            // Kiểm tra: đã kết thúc game chưa, ô đã có người đánh chưa
+            if (gameState[clickedCellIndex] !== '' || !gameActive) {
+                return;
+            }
+
+            // Cập nhật trạng thái và giao diện
+            gameState[clickedCellIndex] = currentPlayer;
+            clickedCell.textContent = currentPlayer;
+            clickedCell.classList.add(currentPlayer);
+
+            // Kiểm tra kết quả
+            if (checkWin()) {
+                handleResultValidation(false, currentPlayer);
+            } else if (gameState.every(cell => cell !== '')) {
+                // Kiểm tra Hòa
+                handleResultValidation(true);
+            } else {
+                // Đổi lượt chơi
+                changePlayer();
+            }
+        }
+
+        // 4. Kiểm tra điều kiện thắng
+        function checkWin() {
+            for (let i = 0; i < winningConditions.length; i++) {
+                const condition = winningConditions[i];
+                let a = gameState[condition[0]];
+                let b = gameState[condition[1]];
+                let c = gameState[condition[2]];
+
+                if (a !== '' && a === b && b === c) {
+                    // Đã có người thắng, highlight các ô thắng
+                    condition.forEach(index => {
+                        document.querySelector(`.cell[data-index="${index}"]`).classList.add('winning-cell');
+                    });
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // 5. Cập nhật trạng thái và thông báo kết quả
+        function handleResultValidation(isDraw, winner = null) {
+            gameActive = false; // Dừng game
+            
+            if (isDraw) {
+                statusDisplay.textContent = "🤝 Trò chơi Hòa!";
+            } else {
+                statusDisplay.textContent = `🎉 Người chơi ${winner} đã thắng!`;
+            }
+        }
+
+        // 6. Đổi lượt chơi
+        function changePlayer() {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            statusDisplay.textContent = `Lượt của người chơi: ${currentPlayer}`;
+        }
+
+        // 7. Reset trò chơi
+        function resetGame() {
+            gameActive = true;
+            currentPlayer = 'X';
+            gameState.fill('');
+            statusDisplay.textContent = `Lượt của người chơi: ${currentPlayer}`;
+            
+            // Xóa nội dung và trạng thái của các ô
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('X', 'O', 'winning-cell');
+            });
+        }
+
+        // Bắt đầu game khi trang được tải
+        createBoard();
+
+    </script>
+</body>
+</html>
