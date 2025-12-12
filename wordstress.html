@@ -136,4 +136,160 @@
                 <label class="option-label"><input type="radio" name="q1" value="A"> A. discover</label>
                 <label class="option-label"><input type="radio" name="q1" value="B"> B. internet</label>
                 <label class="option-label"><input type="radio" name="q1" value="C"> C. important</label>
-                <label class="option-label"><input type="
+                <label class="option-label"><input type="radio" name="q1" value="D"> D. succeed</label>
+            </div>
+
+            <div class="question-block" id="q2">
+                <p class="question-title">2. Chọn từ có trọng âm khác biệt:</p>
+                <label class="option-label"><input type="radio" name="q2" value="A"> A. holiday</label>
+                <label class="option-label"><input type="radio" name="q2" value="B"> B. customer</label>
+                <label class="option-label"><input type="radio" name="q2" value="C"> C. activity</label>
+                <label class="option-label"><input type="radio" name="q2" value="D"> D. family</label>
+            </div>
+
+            <div class="question-block" id="q3">
+                <p class="question-title">3. Chọn từ có trọng âm khác biệt:</p>
+                <label class="option-label"><input type="radio" name="q3" value="A"> A. economy</label>
+                <label class="option-label"><input type="radio" name="q3" value="B"> B. photograph</label>
+                <label class="option-label"><input type="radio" name="q3" value="C"> C. develop</label>
+                <label class="option-label"><input type="radio" name="q3" value="D"> D. geography</label>
+            </div>
+            
+            <div class="question-block" id="q4">
+                <p class="question-title">4. Chọn từ có trọng âm khác biệt:</p>
+                <label class="option-label"><input type="radio" name="q4" value="A"> A. character</label>
+                <label class="option-label"><input type="radio" name="q4" value="B"> B. delicious</label>
+                <label class="option-label"><input type="radio" name="q4" value="C"> C. carefully</label>
+                <label class="option-label"><input type="radio" name="q4" value="D"> D. organize</label>
+            </div>
+            
+             <div class="question-block" id="q5">
+                <p class="question-title">5. Chọn từ có trọng âm khác biệt:</p>
+                <label class="option-label"><input type="radio" name="q5" value="A"> A. pollution</label>
+                <label class="option-label"><input type="radio" name="q5" value="B"> B. comfortable</label>
+                <label class="option-label"><input type="radio" name="q5" value="C"> C. essential</label>
+                <label class="option-label"><input type="radio" name="q5" value="D"> D. imagine</label>
+            </div>
+
+            <button type="button" onclick="submitQuiz()">Nộp Bài & Xem Kết Quả</button>
+        </form>
+
+        <div id="result"></div>
+        <button type="button" onclick="location.reload()" style="background-color: #6c757d; margin-top: 15px; display: none;" id="restartButton">Làm Lại</button>
+    </div>
+
+    <script>
+        /* PHẦN JAVASCRIPT */
+        const answers = {
+            q1: 'B', // discover (2), internet (1), important (2), succeed (2). -> Internet (1)
+            q2: 'C', // holiday (1), customer (1), activity (2), family (1). -> Activity (2)
+            q3: 'B', // economy (2), photograph (1), develop (2), geography (2). -> Photograph (1)
+            q4: 'B', // character (1), delicious (2), carefully (1), organize (1). -> Delicious (2)
+            q5: 'B'  // pollution (2), comfortable (1), essential (2), imagine (2). -> Comfortable (1)
+        };
+        
+        // Cập nhật phần giải thích cho câu 4 và 5
+        const explanation = {
+            q1: 'Trọng âm: discover (âm 2), internet (<strong>âm 1</strong>), important (âm 2), succeed (âm 2).',
+            q2: 'Trọng âm: holiday (âm 1), customer (âm 1), activity (<strong>âm 2</strong>), family (âm 1).',
+            q3: 'Trọng âm: economy (âm 2), photograph (<strong>âm 1</strong>), develop (âm 2), geography (âm 2).',
+            q4: 'Trọng âm: character (âm 1), delicious (<strong>âm 2</strong>), carefully (âm 1), organize (âm 1). (Quy tắc đuôi -ious thường nhấn âm ngay trước nó).',
+            q5: 'Trọng âm: pollution (âm 2), comfortable (<strong>âm 1</strong>), essential (âm 2), imagine (âm 2).'
+        };
+        
+        function submitQuiz() {
+            let score = 0;
+            const quizForm = document.getElementById('stressQuiz');
+            const resultDiv = document.getElementById('result');
+            const restartButton = document.getElementById('restartButton');
+            
+            // Vô hiệu hóa nút nộp bài
+            document.querySelector('button[onclick="submitQuiz()"]').disabled = true;
+
+            // Xóa kết quả và feedback cũ
+            resultDiv.innerHTML = '';
+            resultDiv.style.display = 'block';
+            resultDiv.classList.remove('correct-answer', 'wrong-answer');
+            document.querySelectorAll('.option-label').forEach(label => {
+                label.classList.remove('feedback-correct', 'feedback-wrong');
+                const mark = label.querySelector('.correct-mark');
+                if (mark) mark.remove();
+                
+                const questionBlock = label.closest('.question-block');
+                const oldExplanation = questionBlock.querySelector('.explanation-text');
+                if (oldExplanation) oldExplanation.remove();
+            });
+
+            // Vòng lặp kiểm tra từng câu hỏi
+            for (const qKey in answers) {
+                const selectedOption = quizForm.elements[qKey].value;
+                const correctAnswer = answers[qKey];
+                const questionBlock = document.getElementById(qKey);
+                
+                // Vô hiệu hóa input sau khi nộp bài
+                quizForm.elements[qKey].forEach(radio => radio.disabled = true);
+                
+                const labels = questionBlock.querySelectorAll('.option-label');
+                
+                let isCorrect = (selectedOption === correctAnswer);
+
+                if (isCorrect) {
+                    score++;
+                }
+
+                labels.forEach(label => {
+                    const value = label.querySelector('input').value;
+                    
+                    // 1. Highlight đáp án được chọn (Đúng/Sai)
+                    if (value === selectedOption) {
+                        if (isCorrect) {
+                            label.classList.add('feedback-correct');
+                        } else {
+                            label.classList.add('feedback-wrong');
+                        }
+                    }
+                    
+                    // 2. Đánh dấu đáp án đúng
+                    if (value === correctAnswer) {
+                         const mark = document.createElement('span');
+                         mark.classList.add('correct-mark');
+                         mark.textContent = isCorrect && selectedOption === value ? '✅ (Đúng)' : `✅ (Đáp án đúng)`;
+                         label.appendChild(mark);
+                         // Nếu người chơi chọn sai, highlight đáp án đúng màu xanh lá
+                         if (!isCorrect) {
+                             label.classList.add('feedback-correct');
+                         }
+                    }
+                });
+                
+                // Thêm giải thích vào cuối mỗi câu hỏi
+                const expDiv = document.createElement('p');
+                expDiv.classList.add('explanation-text');
+                expDiv.style.fontSize = '0.95em';
+                expDiv.style.marginTop = '10px';
+                expDiv.style.color = '#007bff';
+                expDiv.innerHTML = `<strong>Giải thích:</strong> ${explanation[qKey]}`;
+                questionBlock.appendChild(expDiv);
+            }
+
+            // Hiển thị tổng kết quả
+            const totalQuestions = Object.keys(answers).length;
+            const percentage = (score / totalQuestions) * 100;
+
+            resultDiv.innerHTML = `<h2>Kết quả của bạn</h2><p>Bạn đã trả lời đúng ${score}/${totalQuestions} câu. (${percentage.toFixed(0)}%)</p>`;
+            
+            if (score >= 4) {
+                resultDiv.classList.add('correct-answer');
+                resultDiv.innerHTML += '<p style="color: #155724;">Tuyệt vời! Bạn có kiến thức tốt về trọng âm.</p>';
+            } else {
+                resultDiv.classList.add('wrong-answer');
+                resultDiv.innerHTML += '<p style="color: #721c24;">Cần luyện tập thêm về quy tắc trọng âm tiếng Anh.</p>';
+            }
+            
+            // Ẩn nút nộp bài và hiện nút làm lại
+            document.querySelector('button[onclick="submitQuiz()"]').style.display = 'none';
+            restartButton.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
