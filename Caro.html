@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cờ Caro (Tic-Tac-Toe)</title>
+    <style>
+        /* CSS cho Game Caro */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #004d40;
+        }
+
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+
+        #status {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            background-color: #26a69a;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell {
+            background-color: #b2dfdb;
+            border: 2px solid #004d40;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            user-select: none;
+        }
+
+        .cell:hover {
+            background-color: #80cbc4;
+        }
+
+        .cell.X {
+            color: #ff5252;
+        }
+
+        .cell.O {
+            color: #448aff;
+        }
+
+        .winning-cell {
+            background-color: #ffeb3b !important;
+        }
+
+        button {
+            margin-top: 25px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            color: white;
+            background-color: #00796b;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #004d40;
+        }
+        
+        #back-button {
+            background-color: #6c757d;
+            margin-top: 15px;
+        }
+        #back-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <h1>❌⭕ Cờ Caro 3x3</h1>
+    <div id="status">Lượt của người chơi: X</div>
+    
+    <div class="board" id="gameBoard">
+        </div>
+    
+    <button onclick="resetGame()">Chơi Lại</button>
+    <button id="back-button" onclick="window.location.href='Game.html'">Về Trang Chọn Game</button>
+
+    <script>
+        /* JAVASCRIPT cho Game Caro */
+        const board = document.getElementById('gameBoard');
+        const statusDisplay = document.getElementById('status');
+        
+        let gameActive = true;
+        let currentPlayer = 'X';
+        let gameState = Array(9).fill(''); 
+
+        const winningConditions = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function createBoard() {
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.setAttribute('data-index', i);
+                cell.addEventListener('click', handleCellClick);
+                board.appendChild(cell);
+            }
+        }
+
+        function handleCellClick(event) {
+            const clickedCell = event.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+            if (gameState[clickedCellIndex] !== '' || !gameActive) {
+                return;
+            }
+
+            gameState[clickedCellIndex] = currentPlayer;
+            clickedCell.textContent = currentPlayer;
+            clickedCell.classList.add(currentPlayer);
+
+            if (checkWin()) {
+                handleResultValidation(false, currentPlayer);
+            } else if (gameState.every(cell => cell !== '')) {
+                handleResultValidation(true);
+            } else {
+                changePlayer();
+            }
+        }
+
+        function checkWin() {
+            for (let i = 0; i < winningConditions.length; i++) {
+                const condition = winningConditions[i];
+                let a = gameState[condition[0]];
+                let b = gameState[condition[1]];
+                let c = gameState[condition[2]];
+
+                if (a !== '' && a === b && b === c) {
+                    condition.forEach(index => {
+                        document.querySelector(`.cell[data-index="${index}"]`).classList.add('winning-cell');
+                    });
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function handleResultValidation(isDraw, winner = null) {
+            gameActive = false;
+            
+            if (isDraw) {
+                statusDisplay.textContent = "🤝 Trò chơi Hòa!";
+            } else {
+                statusDisplay.textContent = `🎉 Người chơi ${winner} đã thắng!`;
+            }
+        }
+
+        function changePlayer() {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            statusDisplay.textContent = `Lượt của người chơi: ${currentPlayer}`;
+        }
+
+        function resetGame() {
+            gameActive = true;
+            currentPlayer = 'X';
+            gameState.fill('');
+            statusDisplay.textContent = `Lượt của người chơi: ${currentPlayer}`;
+            
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('X', 'O', 'winning-cell');
+            });
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
