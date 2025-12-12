@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò Chơi Sudoku</title>
+    <style>
+        /* CSS cho Game Sudoku */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        h1 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        #message {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            height: 30px;
+        }
+
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            grid-template-rows: repeat(9, 1fr);
+            width: 450px;
+            height: 450px;
+            border: 4px solid #333;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #bbb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5em;
+            font-weight: 500;
+            cursor: pointer;
+            box-sizing: border-box;
+            background-color: #ffffff;
+            transition: background-color 0.1s;
+        }
+
+        /* Định dạng đường viền khối 3x3 */
+        .cell:nth-child(3n) { border-right-width: 3px; }
+        .cell:nth-child(27n) ~ .cell { border-bottom-width: 3px; }
+        .sudoku-grid > div:nth-child(27n) { border-bottom-width: 3px; }
+        .sudoku-grid > div:nth-child(-n+9) { border-top-width: 1px; }
+        .cell:nth-child(9n+1) { border-left-width: 1px; }
+
+        .initial {
+            background-color: #e9ecef;
+            color: #333;
+            font-weight: bold;
+            cursor: default;
+        }
+        
+        .player-input {
+            color: #007bff;
+            font-weight: 600;
+        }
+
+        .selected {
+            background-color: #ffeb3b;
+        }
+
+        .error {
+            background-color: #f8d7da !important;
+            color: #dc3545;
+        }
+
+        .keypad {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            width: 300px;
+        }
+
+        .keypad button {
+            padding: 10px;
+            font-size: 1.2em;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .keypad button:hover {
+            background-color: #0056b3;
+        }
+        
+        #clearButton {
+            grid-column: span 3;
+            background-color: #6c757d;
+        }
+        
+        #clearButton:hover {
+             background-color: #5a6268;
+        }
+
+        .action-buttons button {
+            margin: 10px 5px;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #check-button {
+            background-color: #28a745;
+        }
+        #check-button:hover {
+            background-color: #1e7e34;
+        }
+        #back-button-sudoku {
+            background-color: #6c757d;
+        }
+        #back-button-sudoku:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧠 Trò Chơi Sudoku</h1>
+    <div id="message">Sẵn sàng!</div>
+    
+    <div class="sudoku-grid" id="sudokuGrid">
+        </div>
+    
+    <div class="keypad">
+        <button onclick="inputNumber(1)">1</button>
+        <button onclick="inputNumber(2)">2</button>
+        <button onclick="inputNumber(3)">3</button>
+        <button onclick="inputNumber(4)">4</button>
+        <button onclick="inputNumber(5)">5</button>
+        <button onclick="inputNumber(6)">6</button>
+        <button onclick="inputNumber(7)">7</button>
+        <button onclick="inputNumber(8)">8</button>
+        <button onclick="inputNumber(9)">9</button>
+        <button id="clearButton" onclick="inputNumber(0)">Xóa/Bỏ</button>
+    </div>
+    
+    <div class="action-buttons">
+        <button id="check-button" onclick="checkSolution()">Kiểm tra (Hoàn thành)</button>
+        <button id="back-button-sudoku" onclick="window.location.href='Game.html'">Về Trang Chọn Game</button>
+    </div>
+
+    <script>
+        /* JAVASCRIPT cho Game Sudoku */
+        const grid = document.getElementById('sudokuGrid');
+        const messageDisplay = document.getElementById('message');
+        
+        const initialBoard = [
+            5, 3, 0, 0, 7, 0, 0, 0, 0,
+            6, 0, 0, 1, 9, 5, 0, 0, 0,
+            0, 9, 8, 0, 0, 0, 0, 6, 0,
+            8, 0, 0, 0, 6, 0, 0, 0, 3,
+            4, 0, 0, 8, 0, 3, 0, 0, 1,
+            7, 0, 0, 0, 2, 0, 0, 0, 6,
+            0, 6, 0, 0, 0, 0, 2, 8, 0,
+            0, 0, 0, 4, 1, 9, 0, 0, 5,
+            0, 0, 0, 0, 8, 0, 0, 7, 9
+        ];
+        
+        let currentBoard = [...initialBoard];
+        let selectedCellIndex = -1;
+
+        function createGrid() {
+            grid.innerHTML = '';
+            for (let i = 0; i < 81; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.setAttribute('data-index', i);
+                
+                if (initialBoard[i] !== 0) {
+                    cell.textContent = initialBoard[i];
+                    cell.classList.add('initial');
+                } else {
+                    cell.addEventListener('click', handleCellClick);
+                    if (currentBoard[i] !== 0) {
+                        cell.textContent = currentBoard[i];
+                        cell.classList.add('player-input');
+                    }
+                }
+                
+                grid.appendChild(cell);
+            }
+        }
+        
+        function handleCellClick(event) {
+            if (selectedCellIndex !== -1) {
+                document.querySelector(`.cell[data-index="${selectedCellIndex}"]`).classList.remove('selected');
+            }
+            
+            const clickedCell = event.target;
+            selectedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+            clickedCell.classList.add('selected');
+            
+            messageDisplay.textContent = `Ô số ${selectedCellIndex + 1} được chọn. Nhập số (1-9).`;
+        }
+        
+        function inputNumber(num) {
+            if (selectedCellIndex === -1) {
+                messageDisplay.textContent = "Vui lòng chọn một ô trống để nhập!";
+                return;
+            }
+            
+            const cellElement = document.querySelector(`.cell[data-index="${selectedCellIndex}"]`);
+            
+            if (cellElement.classList.contains('initial')) {
+                selectedCellIndex = -1;
+                cellElement.classList.remove('selected');
+                messageDisplay.textContent = "Không thể thay đổi các ô đã điền sẵn!";
+                return;
+            }
+            
+            if (num === 0) {
+                currentBoard[selectedCellIndex] = 0;
+                cellElement.textContent = '';
+                cellElement.classList.remove('player-input', 'error');
+            } else {
+                currentBoard[selectedCellIndex] = num;
+                cellElement.textContent = num;
+                cellElement.classList.add('player-input');
+                cellElement.classList.remove('error'); 
+            }
+            
+            checkErrors(false);
+        }
+
+        function checkErrors(showCompleteMessage = true) {
+            let isBoardValid = true;
+            let cells = document.querySelectorAll('.cell');
+            
+            cells.forEach(c => c.classList.remove('error'));
+
+            for (let i = 0; i < 81; i++) {
+                if (currentBoard[i] === 0) continue;
+
+                let row = Math.floor(i / 9);
+                let col = i % 9;
+                let num = currentBoard[i];
+                let hasError = false;
+
+                // Kiểm tra hàng và cột
+                for (let j = 0; j < 9; j++) {
+                    if (j !== col && currentBoard[row * 9 + j] === num) {
+                        cells[i].classList.add('error');
+                        cells[row * 9 + j].classList.add('error');
+                        hasError = true;
+                    }
+                    if (j !== row && currentBoard[j * 9 + col] === num) {
+                        cells[i].classList.add('error');
+                        cells[j * 9 + col].classList.add('error');
+                        hasError = true;
+                    }
+                }
+
+                // Kiểm tra khối 3x3
+                let startRow = Math.floor(row / 3) * 3;
+                let startCol = Math.floor(col / 3) * 3;
+                for (let r = 0; r < 3; r++) {
+                    for (let c = 0; c < 3; c++) {
+                        let index = (startRow + r) * 9 + (startCol + c);
+                        if (index !== i && currentBoard[index] === num) {
+                            cells[i].classList.add('error');
+                            cells[index].classList.add('error');
+                            hasError = true;
+                        }
+                    }
+                }
+                
+                if (hasError) {
+                    isBoardValid = false;
+                }
+            }
+            
+            if (showCompleteMessage && !isBoardValid) {
+                messageDisplay.textContent = "❌ Lưới Sudoku có lỗi trùng lặp. Vui lòng sửa!";
+                messageDisplay.style.color = '#dc3545';
+            } else if (showCompleteMessage) {
+                messageDisplay.textContent = "Không có lỗi trùng lặp. Tuyệt vời!";
+                messageDisplay.style.color = '#28a745';
+            }
+            
+            return isBoardValid;
+        }
+
+        function checkSolution() {
+            if (!checkErrors(true)) {
+                return;
+            }
+            
+            if (currentBoard.includes(0)) {
+                messageDisplay.textContent = "⚠️ Vẫn còn ô trống. Hãy hoàn thành lưới Sudoku!";
+                messageDisplay.style.color = '#ffc107';
+                return;
+            }
+            
+            messageDisplay.textContent = "🏆 Chúc mừng! Bạn đã giải Sudoku thành công!";
+            messageDisplay.style.color = '#28a745';
+        }
+        
+        createGrid();
+    </script>
+</body>
+</html>
