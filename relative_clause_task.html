@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Tập Mệnh Đề Quan Hệ (Relative Clauses)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .video-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        video {
+            width: 100%;
+            max-width: 640px; /* Giới hạn kích thước video */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-section {
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px; /* Tăng chiều cao cho câu trả lời tự luận */
+            padding: 15px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước ngoài */
+            resize: vertical; /* Cho phép thay đổi chiều cao */
+        }
+        
+        .submit-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed #ffc107;
+            background-color: #fffbe6;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 Bài Tập Ngữ Pháp: Mệnh Đề Quan Hệ</h1>
+
+        <div class="video-section">
+            <h2>Bước 1: Xem Video</h2>
+            <video controls>
+                <source src="test.mp4" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ thẻ video. Vui lòng tải file MP4 có tên 'test.mp4'.
+            </video>
+        </div>
+
+        <div class="question-section">
+            <h2>Bước 2: Trả Lời Câu Hỏi</h2>
+            <p class="question-text">
+                "Watch the clip and write down 5 sentences using relative clauses."
+            </p>
+            
+            <form id="submissionForm">
+                <textarea 
+                    id="answerArea" 
+                    name="answer" 
+                    placeholder="Viết 5 câu trả lời của bạn vào đây (Sử dụng ít nhất 5 mệnh đề quan hệ khác nhau)."
+                    required
+                ></textarea>
+                
+                <button type="button" class="submit-button" onclick="submitAnswer()">Nộp Bài</button>
+            </form>
+        </div>
+        
+        <div id="feedback">
+            <strong>Lưu ý:</strong> Đây là một bài tập tự luận. Câu trả lời của bạn đã được ghi nhận. Giáo viên sẽ kiểm tra nội dung ngữ pháp (mệnh đề quan hệ) của 5 câu mà bạn đã viết.
+        </div>
+    </div>
+
+    <script>
+        function submitAnswer() {
+            const answer = document.getElementById('answerArea').value.trim();
+            const feedbackDiv = document.getElementById('feedback');
+            
+            if (answer.length === 0) {
+                alert("Vui lòng nhập câu trả lời của bạn trước khi nộp bài.");
+                return;
+            }
+
+            // Ở đây, vì là tự luận, chúng ta chỉ hiển thị thông báo đã nộp thành công.
+            // Để chấm điểm thực tế, bạn sẽ cần một hệ thống backend phức tạp hơn (PHP/Python/Node.js).
+            
+            feedbackDiv.style.display = 'block';
+            
+            // Tắt khu vực trả lời sau khi nộp
+            document.getElementById('answerArea').disabled = true;
+            document.querySelector('.submit-button').disabled = true;
+            document.querySelector('.submit-button').textContent = "Đã Nộp Bài Thành Công!";
+        }
+    </script>
+</body>
+</html>
