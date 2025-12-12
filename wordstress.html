@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiểm Tra Trọng Âm (B1)</title>
+    <style>
+        /* PHẦN CSS */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 700px;
+            margin: 20px 0;
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .question-block {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .question-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 10px;
+        }
+
+        .option-label {
+            display: block;
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: 1px solid #eee;
+        }
+
+        .option-label:hover {
+            background-color: #eaf4ff;
+        }
+
+        .option-label input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: white;
+            background-color: #28a745;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #1e7e34;
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            display: none; /* Ban đầu ẩn kết quả */
+        }
+        
+        .correct-answer {
+            background-color: #d4edda; /* Xanh lá nhạt */
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .wrong-answer {
+            background-color: #f8d7da; /* Đỏ nhạt */
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .feedback-correct {
+            border: 2px solid #28a745 !important;
+            font-weight: bold;
+        }
+        
+        .feedback-wrong {
+            border: 2px solid #dc3545 !important;
+        }
+        
+        /* Hiển thị đáp án đúng sau khi nộp bài */
+        .correct-mark {
+            color: #28a745;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        /* KẾT THÚC PHẦN CSS */
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>🗣️ Kiểm Tra Trọng Âm Tiếng Anh (B1)</h1>
+        <p>Chọn từ có trọng âm chính rơi vào vị trí khác với các từ còn lại.</p>
+
+        <form id="stressQuiz">
+            <div class="question-block" id="q1">
+                <p class="question-title">1. Chọn từ có trọng âm khác biệt:</p>
+                <label class="option-label"><input type="radio" name="q1" value="A"> A. **dis**cover</label>
+                <label class="option-label"><input type="radio" name="q1" value="B"> B. **inter**net</label>
+                <label class="option-label"><input type="radio" name="q1" value="C"> C. **im**portant</label>
+                <label class="option-label"><input type="radio" name="q1" value="D"> D. **suc**ceed</label>
+            </div>
+
+            <div class="question-block" id="q2">
+                <p class="question-title">2. Chọn từ có trọng âm khác biệt:</p>
+                <label class="option-label"><input type="radio" name="q2" value="A"> A. **ho**liday</label>
+                <label class="option-label"><input type="radio" name="q2" value="B"> B. **cu**stomer</label>
+                <label class="option-label"><input type="radio" name="q2" value="C"> C. **ac**tivity</label>
+                <label class="option-label"><input type="radio" name="q2" value="D"> D. **fa**mily</label>
+            </div>
+
+            <div class="question-block" id="q3">
+                <p class="question-title">3. Chọn từ có trọng âm khác biệt:</p>
+                <label class="option-label"><input type="radio" name="q3" value="A"> A. e**co**nomy</label>
+                <label class="option-label"><input type="radio" name="q3" value="B"> B. **pho**tograph</label>
+                <label class="option-label"><input type="radio" name="q3" value="C"> C. **de**velop</label>
+                <label class="option-label"><input type="radio" name="q3" value="D"> D. **ge**ography</label>
+            </div>
+            
+            <div class="question-block" id="q4">
+                <p class="question-title">4. Chọn từ có trọng âm khác biệt:</p>
+                <label class="option-label"><input type="radio" name="q4" value="A"> A. **po**pular (adj)</label>
+                <label class="option-label"><input type="radio" name="q4" value="B"> B. **ci**nema (n)</label>
+                <label class="option-label"><input type="radio" name="q4" value="C"> C. **ho**nest (adj)</label>
+                <label class="option-label"><input type="radio" name="q4" value="D"> D. de**ci**sion (n)</label>
+            </div>
+            
+             <div class="question-block" id="q5">
+                <p class="question-title">5. Chọn từ có trọng âm khác biệt:</p>
+                <label class="option-label"><input type="radio" name="q5" value="A"> A. **re**cord (n)</label>
+                <label class="option-label"><input type="radio" name="q5" value="B"> B. re**cord** (v)</label>
+                <label class="option-label"><input type="radio" name="q5" value="C"> C. **pre**sent (n)</label>
+                <label class="option-label"><input type="radio" name="q5" value="D"> D. pre**sent** (v)</label>
+            </div>
+
+            <button type="button" onclick="submitQuiz()">Nộp Bài & Xem Kết Quả</button>
+        </form>
+
+        <div id="result"></div>
+        <button type="button" onclick="location.reload()" style="background-color: #6c757d; margin-top: 15px; display: none;" id="restartButton">Làm Lại</button>
+    </div>
+
+    <script>
+        /* PHẦN JAVASCRIPT */
+        const answers = {
+            q1: 'B', // discover (2), internet (1), important (2), succeed (2). Đáp án B (trọng âm 1).
+            q2: 'C', // holiday (1), customer (1), activity (2), family (1). Đáp án C (trọng âm 2).
+            q3: 'B', // economy (2), photograph (1), develop (2), geography (2). Đáp án B (trọng âm 1).
+            q4: 'D', // popular (1), cinema (1), honest (1), decision (2). Đáp án D (trọng âm 2).
+            q5: 'B'  // record (n - 1), record (v - 2), present (n - 1), present (v - 2). Đáp án B (trọng âm 2).
+        };
+        
+        const explanation = {
+            q1: 'Trọng âm: discover (âm 2), internet (**âm 1**), important (âm 2), succeed (âm 2).',
+            q2: 'Trọng âm: holiday (âm 1), customer (âm 1), activity (**âm 2**), family (âm 1). (Quy tắc đuôi -ity thường nhấn âm trước nó).',
+            q3: 'Trọng âm: economy (âm 2), photograph (**âm 1**), develop (âm 2), geography (âm 2). (Quy tắc đuôi -y thường nhấn âm thứ 3 từ cuối).',
+            q4: 'Trọng âm: popular (âm 1), cinema (âm 1), honest (âm 1), decision (**âm 2**). (Quy tắc đuôi -ion thường nhấn âm trước nó).',
+            q5: 'Trọng âm: **re**cord (danh từ, âm 1), re**cord** (động từ, âm 2), **pre**sent (danh từ, âm 1), pre**sent** (động từ, âm 2). Đáp án B (re**cord** - động từ) khác biệt với 3 từ còn lại (âm 1).'
+        };
+        
+        function submitQuiz() {
+            let score = 0;
+            const quizForm = document.getElementById('stressQuiz');
+            const resultDiv = document.getElementById('result');
+            const restartButton = document.getElementById('restartButton');
+            
+            // Xóa kết quả và feedback cũ
+            resultDiv.innerHTML = '';
+            resultDiv.style.display = 'block';
+            resultDiv.classList.remove('correct-answer', 'wrong-answer');
+            document.querySelectorAll('.option-label').forEach(label => {
+                label.classList.remove('feedback-correct', 'feedback-wrong');
+                // Xóa đánh dấu đúng/sai cũ
+                const mark = label.querySelector('.correct-mark');
+                if (mark) mark.remove();
+            });
+
+            // Vòng lặp kiểm tra từng câu hỏi
+            for (const qKey in answers) {
+                const selectedOption = quizForm.elements[qKey].value;
+                const correctAnswer = answers[qKey];
+                const questionBlock = document.getElementById(qKey);
+                
+                // Vô hiệu hóa input sau khi nộp bài
+                quizForm.elements[qKey].forEach(radio => radio.disabled = true);
+                
+                const labels = questionBlock.querySelectorAll('.option-label');
+                
+                let isCorrect = (selectedOption === correctAnswer);
+
+                if (isCorrect) {
+                    score++;
+                }
+
+                labels.forEach(label => {
+                    const value = label.querySelector('input').value;
+                    
+                    // 1. Highlight đáp án được chọn (Đúng/Sai)
+                    if (value === selectedOption) {
+                        if (isCorrect) {
+                            label.classList.add('feedback-correct');
+                        } else {
+                            label.classList.add('feedback-wrong');
+                        }
+                    }
+                    
+                    // 2. Đánh dấu đáp án đúng
+                    if (value === correctAnswer) {
+                         const mark = document.createElement('span');
+                         mark.classList.add('correct-mark');
+                         mark.textContent = isCorrect ? '✅ (Đúng)' : `✅ (Đáp án đúng)`;
+                         label.appendChild(mark);
+                         // Nếu người chơi chọn sai, highlight đáp án đúng màu xanh lá
+                         if (!isCorrect) {
+                             label.classList.add('feedback-correct');
+                         }
+                    }
+                });
+                
+                // Thêm giải thích vào cuối mỗi câu hỏi
+                const expDiv = document.createElement('p');
+                expDiv.style.fontSize = '0.95em';
+                expDiv.style.marginTop = '10px';
+                expDiv.style.color = '#007bff';
+                expDiv.innerHTML = `<strong>Giải thích:</strong> ${explanation[qKey]}`;
+                questionBlock.appendChild(expDiv);
+            }
+
+            // Hiển thị tổng kết quả
+            const totalQuestions = Object.keys(answers).length;
+            const percentage = (score / totalQuestions) * 100;
+
+            resultDiv.innerHTML = `<h2>Kết quả của bạn</h2><p>Bạn đã trả lời đúng ${score}/${totalQuestions} câu. (${percentage.toFixed(0)}%)</p>`;
+            
+            if (score >= 4) {
+                resultDiv.classList.add('correct-answer');
+                resultDiv.innerHTML += '<p style="color: #155724;">Tuyệt vời! Bạn có kiến thức tốt về trọng âm.</p>';
+            } else {
+                resultDiv.classList.add('wrong-answer');
+                resultDiv.innerHTML += '<p style="color: #721c24;">Cần luyện tập thêm về quy tắc trọng âm tiếng Anh.</p>';
+            }
+            
+            // Ẩn nút nộp bài và hiện nút làm lại
+            document.querySelector('button[onclick="submitQuiz()"]').style.display = 'none';
+            restartButton.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
